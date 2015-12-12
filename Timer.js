@@ -1,4 +1,5 @@
-// var EventEmitter = require('events');
+var EventEmitter = require('events');
+var util = require('util');
 
 
 // export timer function
@@ -6,20 +7,24 @@ module.exports = Timer;
 
 // 1. Basic Timer
 function Timer () {
-  // EventEmitter.call(this);
+  EventEmitter.call(this);
+
+  var self = this;
+  var i = 0;
 
   setInterval(function () {
-    console.log('tick');
+    self.emit('tick', { interval : i++ });
   }, 1000);
 }
 
-// Timer.prototype = new Object(EventEmitter.prototype, {
-//   constructor: {
-//     value: EventEmitter,
-//     configurable: true,
-//     enumerable: true,
-//     writable: true
-//   }
-// });
+util.inherits(Timer, EventEmitter);
 
-Timer();
+var myTimer = new Timer();
+myTimer.addListener('tick', function (event) {
+  process.stdout.write('tick ' + event.interval + '\n');
+});
+
+// function tickHandler (event) {
+//   process.stdout.write('tick ' + event.interval + '\n');
+// }
+// myTimer.addListener('tick', tickHandler);
